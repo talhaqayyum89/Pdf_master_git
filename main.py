@@ -1,14 +1,15 @@
 import re
 import json
 import PyPDF2
-from processing_funcs import get_cnic_text, get_name_text
+from processing_funcs import get_cnic_text, get_name_text, get_name_att
+
 
 FILE_PATH = '/home/talhaabdulqayyum/Desktop/Extracted_pages/terrorist.pdf'
-output_path = r'/home/talhaabdulqayyum/Desktop/Extracted Json/test.json'
+output_path = r'/home/talhaabdulqayyum/Desktop/Extracted Json/fia_t_list.json'
 list_main = []
 
-f = open(FILE_PATH, mode='rb')
-reader = PyPDF2.PdfFileReader(f)
+file = open(FILE_PATH, mode='rb')
+reader = PyPDF2.PdfFileReader(file)
 
 for i in range(500):
     page = reader.getPage(i)
@@ -26,19 +27,13 @@ for i in range(500):
     else:
         cnic = get_cnic_text(txt).replace("\n", "").strip()
         cnic_ = re.sub(r'-', '', cnic)
-
         name = get_name_text(txt).replace("\n", "").strip()
-
-        if name.find('s/o') != -1:
-            name_ = re.split('s/o', name)
-        else:
-            name_ = re.split('f/name:', name)
-
+        name_ = get_name_att(name)
         dict_items = ['name', 'fatherName']
-        dictionery = dict(zip(dict_items, name_))
-        dictionery['cnic'] = cnic_
+        dictionary = dict(zip(dict_items, name_))
+        dictionary['cnic'] = cnic_
+        list_main.append(dictionary)
 
-        list_main.append(dictionery)
 
 with open(output_path, "w") as outfile:
     json.dump(list_main, outfile)
