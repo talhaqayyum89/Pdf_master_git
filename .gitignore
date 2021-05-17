@@ -1,0 +1,9 @@
+*.pyc
+.coverage
+htmlcov/*
+data/*
+config/config.py
+env/*
+venv/*
+.idea/*
+
